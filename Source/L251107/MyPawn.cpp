@@ -59,7 +59,7 @@ AMyPawn::AMyPawn()
 	Arrow->SetRelativeLocation(FVector(70.f, 0, 0)); //RootComponent 에서 얼마만큼 떨어지는지를 표현한다고 한다.
 
 	Movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MoveMent"));
-	Movement->MaxSpeed = 2000.f;
+	Movement->MaxSpeed = 100.f;
 }
 
 // Called when the game starts or when spawned
