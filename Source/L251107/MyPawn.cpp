@@ -89,24 +89,30 @@ void AMyPawn::Tick(float DeltaTime)
 void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	InputComponent->BindAxis("Roll",this, &AMyPawn::Rotation_Roll);
-	InputComponent->BindAxis("Pitch", this, &AMyPawn::Rotation_Pitch);
+	PlayerInputComponent->BindAxis("Roll",this, &AMyPawn::Rotation_Roll);
+	PlayerInputComponent->BindAxis("Pitch", this, &AMyPawn::Rotation_Pitch);
 
-	InputComponent->BindAction("Fire", IE_Pressed, this, &AMyPawn::RoketFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMyPawn::RoketFire);
+
 }
 
 void AMyPawn::Rotation_Roll(float AxisValue)
 {
-	this->AddActorLocalRotation(FRotator(0,0, AxisValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld())));
+	this->AddActorLocalRotation(FRotator(0,0, AxisValue * 60.0f * UGameplayStatics::GetWorldDeltaSeconds(GetWorld())));
 }	
 
 void AMyPawn::Rotation_Pitch(float AxisValue)
 {
-	this->AddActorLocalRotation(FRotator(AxisValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 0, 0));
+	this->AddActorLocalRotation(
+		FRotator(
+			AxisValue * 60.0f * UGameplayStatics::GetWorldDeltaSeconds(GetWorld()), 
+			0, 
+			0
+		)
+	);
 }
 
 void AMyPawn::RoketFire()
 {
-	//this->GetWorld()->SpawnActorDeferred(ARoket::StaticClass,,);
-	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+	this->GetWorld()->SpawnActor<ARoket>(ARoket::StaticClass(),Arrow->K2_GetComponentToWorld());
 }

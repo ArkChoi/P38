@@ -6,6 +6,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "Targey.h"
+
+
 // Sets default values
 ARoket::ARoket()
 {
@@ -20,6 +25,12 @@ ARoket::ARoket()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(Box);
 	StaticMesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FQuat(FRotator(-90.0f, 0.0f, 0.0f)));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_Rocket(TEXT("/Script/Engine.StaticMesh'/Game/Meshs/SM_Rocket.SM_Rocket'")); // = class UStaticMesh SM_Body | 이거랑 같다고 한다.
+	if (SM_Rocket.Succeeded())
+	{
+		StaticMesh->SetStaticMesh(SM_Rocket.Object);
+	}
+
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = 200.f;
@@ -32,6 +43,9 @@ void ARoket::BeginPlay()
 {
 	Super::BeginPlay();
 	SetLifeSpan(3.f);
+
+	//Delegate UE
+	OnActorBeginOverlap.AddDynamic(this,&ARoket::ProcessActorBeginOverlap);
 }
 
 // Called every frame
@@ -39,4 +53,21 @@ void ARoket::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
+void ARoket::ProcessActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	UGameplayStatics::ApplyDamage(
+		OtherActor,
+		10.f,
+		UGameplayStatics::GetPlayerController(GetWorld(), 0),
+		this,
+		nullptr
+	);
+
+	if (dynamic_cast<ATargey*>(OtherActor))
+	{
+		Destroy();
+	}
+}
+
 

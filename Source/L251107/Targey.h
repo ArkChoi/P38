@@ -4,20 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Roket.generated.h"
-
-class UBoxComponent;
-class UStaticMeshComponent;
-class UProjectileMovementComponent;
+#include "Targey.generated.h"
 
 UCLASS()
-class L251107_API ARoket : public AActor
+class L251107_API ATargey : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARoket();
+	ATargey();
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,12 +24,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	UBoxComponent* Box;
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* StaticMesh;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Components")
-	UProjectileMovementComponent* ProjectileMovement;
+	TObjectPtr <class UBoxComponent> Box;
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components")
+	TObjectPtr <class UStaticMeshComponent> Sphere;
 
 	UFUNCTION()
-	void ProcessActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	void ProcessActorAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 };
